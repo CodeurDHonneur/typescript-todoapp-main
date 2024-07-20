@@ -21,7 +21,7 @@
                   type="password"
                   required
                 ></v-text-field>
-                <v-btn :disabled="!valid" color="primary" @click="login"> Login </v-btn>
+                <v-btn :disabled="!valid" color="primary" @click="handelLogin"> Login </v-btn>
               </v-form>
             </v-card-text>
           </v-card>
@@ -33,14 +33,17 @@
   
   <script setup lang="ts">
   import {ref} from 'vue'
-  import {useAuth } from '@vueuse/firebase'
+  import {useAuth } from './composables/auth'
   import {auth} from '@/configs/firebase'
-import { signInWithEmailAndPassword } from 'firebase/auth';
+  
 
 
   const valid = ref(false);
   const email = ref('');
   const password = ref('');
+  const {login, user} = useAuth();
+
+
   
   const emailRules = [
     (v: string) => !!v || 'Email is required',
@@ -53,20 +56,9 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
   ];
   
   const form = ref();
-  
-  const { user } = useAuth(auth);
 
-  function login() {
-  signInWithEmailAndPassword(auth, email.value, password.value)
-//   .then((userCredential) => {
-//     // Signed in 
-//     const user = userCredential.user;
-//     // ...
-//   })
-//   .catch((error) => {
-//     const errorCode = error.code;
-//     const errorMessage = error.message;
-//   });
+  async function handelLogin() {
+    await login(email.value, password.value);
   }
   
   </script>
